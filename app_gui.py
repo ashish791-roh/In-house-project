@@ -8,13 +8,56 @@ from matplotlib.figure import Figure
 import json
 import os
 
+from database import create_table, register_user, validate_user, add_transaction as db_add_transaction, get_transactions
+
 DATA_FILE = "transactions.json"
 
 transactions = []
 
+def hash_password(password):
+    import hashlib
+    return hashlib.sha26(password.encode()).hexdigest()
 
+def show_login():
+    login_win = tk.Tk()
+    login_win.title("Login - Personal Finance Tracker")
+    login_win.geometry("300x250")
+
+    ttk.Label(login_win, text="Username").pack(pady=5)
+    username_entry = ttk.Entry(login_win)
+    username_entry.pack(pady=5)
+
+    ttk.Label(login_win, text="Password").pack(pady=5)
+    password_entry = ttk.Entry(login_win, show="*")
+    password_entry.pack(pady=5)
+
+    def attempt_login():
+        username = username_entry.get()
+        password = password_entry.get()
+        if validate_user(username, password):
+            messagebox.showinfo("Success", "Login successful!")
+            login_win.destroy()
+            show_splash()
+        else:
+            messagebox.showerror("Error", "Invalid credentials!")
+
+    def attempt_register():
+        username = username_entry.get()
+        password = password_entry.get()
+        if not username or not password:
+            messagebox.showerror("Error", "Username and password cannot be empty.")
+            return
+        if register_user(username, password):
+            messagebox.showinfo("Registered", "Account created. Please login.")
+        else:
+            messagebo.showerror("Error", "Username already exits.")
+    
+    ttk.Button(login_win, text="Login", command=attempt_login).pack(pady=5)
+    ttk.Button(login_win, text="Register", command=attempt_register).pack(pady=5)
+
+    login_win.mainloop()
+    
 def add_transaction():
-    global transactions
     type_ = trans_type.get()
     amount = amount_entry.get()
     category = category_entry.get()
@@ -25,23 +68,15 @@ def add_transaction():
         messagebox.showerror("Invalid Input", "Amount must be a number.")
         return
 
-    transaction = {
-        'type': type_,
-        'amount': amount,
-        'category': category,
-        'date': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    }
-
+    db_add_transaction(type_, amount, category)
+    load_data()    
 
     update_summary()  # Then update summary
     show_chart(chart_selector.get())  # And refresh chart
-
     messagebox.showinfo("Success", f"{type_} added successfully!")
-
+    
     amount_entry.delete(0, tk.END)
     category_entry.delete(0, tk.END)
-    update_summary()
-
 # Update summary
 def update_summary():
     income = sum(t['amount'] for t in transactions if t['type'] == 'Income')
@@ -53,7 +88,6 @@ def update_summary():
     balance_var.set(f"₹ {balance:.2f}")
     
 def show_chart(chart_type=None):
-    
     for widget in main_window.winfo_children():
         if isinstance(widget, FigureCanvasTkAgg):
             widget.get_tk_widget().destroy()
@@ -95,7 +129,6 @@ def show_chart(chart_type=None):
         else:
             plot.text(0.5, 0.5, "No expense data", ha='center')
             
-            
     elif chart_type == "Line: Income Over Time":
         dates = [t['date'] for t in transactions if t['type'] == 'Income']
         amounts = [t['amount'] for t in transactions if t['type'] == 'Income']
@@ -110,14 +143,12 @@ def show_chart(chart_type=None):
         plot.set_title("Expense Over Time")
         plot.tick_params(axis='x', rotation=45)
 
-
     else:
         plot.text(0.5, 0.5, "Invalid Chart Type", ha='center')
 
     canvas = FigureCanvasTkAgg(fig, master=main_window)
     canvas.draw()
     canvas.get_tk_widget().pack(pady=10)
-
 
 def show_splash():
     splash = tk.Toplevel()
@@ -140,24 +171,20 @@ def show_splash():
             splash.after(30, load_progress, value + 2)  # Simulate loading
 
     load_progress()  # Start loading
-
-    
     
 def show_main_app():
     global main_window, trans_type, amount_entry, category_entry
-    global income_var, expense_var, balance_var
+    global income_var, expense_var, balance_var, chart_selector
 
     main_window = tk.Tk()
     main_window.title("Voice Enabled Personal Finance Tracker")
-    main_window.geometry("600x600")
+    main_window.geometry("700x600")
     main_window.configure(bg="#004D4D")
-    
     
     income_var = tk.StringVar(value="₹ 0.00")
     expense_var = tk.StringVar(value="₹ 0.00")
     balance_var = tk.StringVar(value="₹ 0.00")
     
-
     # Date
     today = datetime.now().strftime("%B %d, %Y")
     date_label = tk.Label(main_window, text=today, bg="#004D4D", fg="white", font=("Arial", 10, "bold"))
@@ -174,7 +201,6 @@ def show_main_app():
     ttk.Label(summary_frame, text="Balance:").grid(row=2, column=0, sticky="w")
     ttk.Label(summary_frame, textvariable=balance_var).grid(row=2, column=1, sticky="e")
     
-
     # Entry
     entry_frame = ttk.LabelFrame(main_window, text="Add Transaction", padding=10)
     entry_frame.pack(padx=10, pady=10, fill="x")
@@ -200,20 +226,18 @@ def show_main_app():
     chart_frame = ttk.LabelFrame(main_window, text="Charts📊", padding=10)
     chart_frame.pack(padx=10, pady=10, fill="x")
     
-    global chart_selector
     chart_selector = ttk.Combobox(
-    chart_frame,
-    values=[
-        "Bar: Income vs Expense",
-        "Pie: Income vs Expense",
-        "Bar: Category-wise Expense",
-        "Line: Income Over Time",
-        "Line: Expense Over Time"
-    ],
-    state="readonly",
-    width=30
-)
-
+        chart_frame,
+        values=[
+            "Bar: Income vs Expense",
+            "Pie: Income vs Expense",
+            "Bar: Category-wise Expense",
+            "Line: Income Over Time",
+            "Line: Expense Over Time"
+        ],
+        state="readonly",
+        width=30
+    )    
     chart_selector.current(0)
     chart_selector.pack(side="left", padx=10)
 
@@ -225,36 +249,28 @@ def show_main_app():
     voice_frame = ttk.LabelFrame(main_window, text="Voice Assistant", padding=10)
     voice_frame.pack(padx=10, pady=10, fill="x")
     ttk.Label(voice_frame, text="(Voice commands here...)").pack()
-
-    # Title label
-    label = tk.Label(main_window, text="Personal Finance Tracker", bg="#2C2C2C", fg="white",
-                     font=("Arial", 16, "bold"))
-    label.pack(pady=20)
     
     load_data()
     update_summary()
     show_chart(chart_selector.get())
-    print("Selected chart type:", chart_selector.get())
 
     main_window.mainloop()
     
 def load_data():
     global transactions
-    if os.path.exists(DATA_FILE):
-        try:
-            with open(DATA_FILE, "r") as f:
-                loaded = json.load(f)
-                transactions.extend(loaded)
-        except Exception as e:
-            messagebox.showerror("Load Error", f"Could not load data: {e}")
-
-    
-    
+    rows = get_transactions()
+    transactions.clear()
+    for row in rows:
+        transactions.append({
+            'id': row[0],
+            'type': row[1],
+            'amount': row[2],
+            'category': row[3],
+            'note': row[4],
+            'date': row[5]
+        })
 
 # Initial launch
 if __name__ == "__main__":
-    load_data()
-    temp_root = tk.Tk()
-    temp_root.withdraw()  
-    show_splash()
-    temp_root.mainloop()
+    create_table()
+    show_login()
