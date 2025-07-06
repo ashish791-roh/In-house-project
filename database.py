@@ -58,7 +58,7 @@ def validate_user(username, password):
         return True
     return False
 
-def add_transaction(type, amount, category, note=""):
+def add_transactions(type, amount, category, note=""):
     conn = connect()
     cursor = conn.cursor()
     date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
