@@ -43,4 +43,8 @@ def process_command(command):
     elif "summary" in command:
         speak("Feature not yet implemented in voice. Check GUI.")
     else:
+<<<<<<< Updated upstream
         speak("Unknown command.")
+=======
+        speak("Unknown command.")
+>>>>>>> Stashed changes
