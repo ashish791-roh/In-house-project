@@ -5,6 +5,7 @@ from PIL import Image, ImageTk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import matplotlib.pyplot as plt
 import pyttsx3
 import speech_recognition as sr
@@ -12,6 +13,8 @@ import re
 from tkcalendar import Calendar
 import numpy as np
 =======
+=======
+>>>>>>> Stashed changes
 import pyttsx3
 
 >>>>>>> Stashed changes
@@ -21,14 +24,20 @@ import pandas as pd
 from fpdf import FPDF
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 from database import create_table, register_user, validate_user, add_transactions as db_add_transaction, get_transactions,get_transaction_by_id, update_transaction, delete_transaction
 
 CONFIG_FILE = "user_config.json"
 =======
+=======
+>>>>>>> Stashed changes
 from database import create_table, register_user, validate_user, add_transactions as db_add_transaction, get_transactions
 
 CONFIG_FILE = "user_config.json"
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 DATA_FILE = "transactions.json"
 REMEMBER_FILE = "remember_user.json"
@@ -45,6 +54,7 @@ chart_selector = None
 transaction_tree = None
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 income_var = None
 expense_var = None
 balance_var = None
@@ -54,6 +64,12 @@ def hash_password(password):
     import hashlib
     return hashlib.sha26(password.encode()).hexdigest()
 
+=======
+def hash_password(password):
+    import hashlib
+    return hashlib.sha26(password.encode()).hexdigest()
+
+>>>>>>> Stashed changes
 import tkinter as tk
 from tkinter import ttk, messagebox
 import pyttsx3
@@ -1200,6 +1216,7 @@ def open_chart_window():
               bg="#4CAF50", fg="white", font=("Segoe UI", 10, "bold")).pack(side="right", padx=5)
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 def refresh_chart(chart_type, parent_frame):
     for widget in parent_frame.winfo_children():
         widget.destroy()
@@ -1222,6 +1239,8 @@ def save_chart(chart_type):
         messagebox.showerror("Error", f"Unable to save chart: {e}")
 
 =======
+=======
+>>>>>>> Stashed changes
     else:
         plot.text(0.5, 0.5, "Invalid Chart Type", ha='center')
 
@@ -1231,6 +1250,9 @@ def save_chart(chart_type):
 
 from playsound import playsound
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 def show_splash(username):
     splash = tk.Toplevel()
@@ -1239,8 +1261,11 @@ def show_splash(username):
     splash.configure(bg="#1976D2")
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     tk.Label(splash, text="Loading Personal Finance Tracker", font=("Helvetica", 14, "bold"), bg="#1976D2", fg="white").pack(pady=30)
 =======
+=======
+>>>>>>> Stashed changes
     label = ttk.Label(splash, text="", font=("Helvetica", 14))
     label.pack(pady=30)
 >>>>>>> Stashed changes
@@ -1248,6 +1273,7 @@ def show_splash(username):
     progress = ttk.Progressbar(splash, orient="horizontal", mode="determinate", length=300)
     progress.pack(pady=20)
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     status_label = tk.Label(splash, text="Initializing...", font=("Helvetica", 10), bg="#1976D2", fg="white")
     status_label.pack(pady=10)
@@ -1262,6 +1288,8 @@ def show_splash(username):
         ]
         
 =======
+=======
+>>>>>>> Stashed changes
     splash_texts = ["Loading.", "Loading..", "Loading...", "Loading...."]
 
     def animate_label(index=0):
@@ -1284,6 +1312,7 @@ def show_splash(username):
             show_main_app(username)
         else:
             progress['value'] = value
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
             status_index = min(value // 20, len(status_messages) - 1)
             status_label.config(text=status_messages[status_index])
@@ -1484,6 +1513,17 @@ def show_main_app(username):
     global income_var, expense_var, balance_var, chart_selector
 
     main_window = tk.Tk()
+=======
+            splash.after(30, load_progress, value + 2)
+
+    load_progress()
+    
+def show_main_app(username):
+    global main_window, trans_type, amount_entry, category_entry
+    global income_var, expense_var, balance_var, chart_selector
+
+    main_window = tk.Tk()
+>>>>>>> Stashed changes
     main_window.title("Dashboard - Personal Finance Tracker")
     main_window.geometry("900x650")
     main_window.configure(bg="#001F2D")
@@ -1528,6 +1568,9 @@ def show_main_app(username):
     chart_frame = tk.LabelFrame(main_window, text="Charts 📊", font=("Segoe UI", 12, "bold"), bg="#ECEFF1", padx=10, pady=10)
     chart_frame.pack(padx=20, pady=10, fill="x")
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     chart_selector = ttk.Combobox(chart_frame, values=[
         "Bar: Income vs Expense",
@@ -1536,13 +1579,18 @@ def show_main_app(username):
         "Line: Income Over Time",
         "Line: Expense Over Time"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     ], state="readonly", width=25)
+=======
+    ], state="readonly", width=30)
+>>>>>>> Stashed changes
 =======
     ], state="readonly", width=30)
 >>>>>>> Stashed changes
     chart_selector.current(0)
     chart_selector.pack(pady=5)
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     # Chart buttons
     chart_buttons_frame = tk.Frame(chart_frame, bg="#ECEFF1")
@@ -1604,6 +1652,8 @@ def show_main_app(username):
     chart_selector.bind('<<ComboboxSelected>>', on_chart_change)
     
 =======
+=======
+>>>>>>> Stashed changes
     tk.Button(chart_frame, text="Show Chart", command=lambda: show_chart(chart_selector.get()), bg="#00796B", fg="white", font=("Segoe UI", 10, "bold")).pack(side="left", padx=10)
 
     voice_frame = tk.LabelFrame(main_window, text="Voice Assistant 🎙️", font=("Segoe UI", 12, "bold"), bg="#ECEFF1", padx=10, pady=10)
@@ -1613,12 +1663,16 @@ def show_main_app(username):
     load_data()
     update_summary()
     show_chart(chart_selector.get())
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
     main_window.mainloop()
 
 def load_data():
     global transactions
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     try:
         if current_user:
@@ -1648,6 +1702,8 @@ def export_to_excel():
     if not file_path:
         return
 =======
+=======
+>>>>>>> Stashed changes
     rows = get_transactions()
     transactions.clear()
     for row in rows:
@@ -1659,6 +1715,9 @@ def export_to_excel():
             'note': row[4],
             'date': row[5]
         })
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
     try:
@@ -1745,8 +1804,11 @@ def main():
 # TO run the app
 if __name__ == "__main__":
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     main()
 =======
+=======
+>>>>>>> Stashed changes
     create_table
 
     # Check if user is already registered
@@ -1789,5 +1851,9 @@ if __name__ == "__main__":
         show_register_window()
 
     else:
+<<<<<<< Updated upstream
+        show_login()
+>>>>>>> Stashed changes
+=======
         show_login()
 >>>>>>> Stashed changes

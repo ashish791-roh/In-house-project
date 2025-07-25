@@ -2,7 +2,11 @@ import sqlite3
 import hashlib
 from datetime import datetime
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import os
+=======
+import hashlib
+>>>>>>> Stashed changes
 =======
 import hashlib
 >>>>>>> Stashed changes
@@ -339,5 +343,9 @@ def get_transactions():
     cursor.execute("SELECT * FROM transactions ORDER BY date")
     rows = cursor.fetchall()
     conn.close()
+<<<<<<< Updated upstream
+    return rows
+>>>>>>> Stashed changes
+=======
     return rows
 >>>>>>> Stashed changes

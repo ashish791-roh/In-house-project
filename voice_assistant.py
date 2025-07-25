@@ -44,7 +44,11 @@ def process_command(command):
         speak("Feature not yet implemented in voice. Check GUI.")
     else:
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         speak("Unknown command.")
+=======
+        speak("Unknown command.")
+>>>>>>> Stashed changes
 =======
         speak("Unknown command.")
 >>>>>>> Stashed changes
