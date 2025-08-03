@@ -1,30 +1,19 @@
 import sqlite3
 import hashlib
 from datetime import datetime
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 import os
-=======
-import hashlib
->>>>>>> Stashed changes
-=======
-import hashlib
->>>>>>> Stashed changes
 
 DATABASE_NAME = "finance_tracker.db"
 
 def hash_password(password):
-    """Hash password using SHA-256"""
     return hashlib.sha256(password.encode()).hexdigest()
 
 def create_table():
-<<<<<<< Updated upstream
-    """Create necessary database tables"""
     try:
         conn = sqlite3.connect(DATABASE_NAME)
         cursor = conn.cursor()
         
-        # Create users table
+        # Users table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,7 +23,7 @@ def create_table():
             )
         ''')
         
-        # Create transactions table
+        # Transactions table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS transactions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,7 +48,6 @@ def create_table():
         return False
 
 def register_user(username, password):
-    """Register a new user"""
     try:
         conn = sqlite3.connect(DATABASE_NAME)
         cursor = conn.cursor()
@@ -70,7 +58,6 @@ def register_user(username, password):
             conn.close()
             return False
         
-        # Hash password and insert user
         hashed_password = hash_password(password)
         cursor.execute(
             "INSERT INTO users (username, password) VALUES (?, ?)",
@@ -87,7 +74,6 @@ def register_user(username, password):
         return False
 
 def validate_user(username, password):
-    """Validate user credentials"""
     try:
         conn = sqlite3.connect(DATABASE_NAME)
         cursor = conn.cursor()
@@ -108,7 +94,6 @@ def validate_user(username, password):
         return False
 
 def add_transactions(username, transaction_type, amount, category, note, date):
-    """Add a new transaction to database"""
     try:
         conn = sqlite3.connect(DATABASE_NAME)
         cursor = conn.cursor()
@@ -149,7 +134,6 @@ def get_transactions(username):
         return []
 
 def delete_transaction(transaction_id, username):
-    """Delete a specific transaction"""
     try:
         conn = sqlite3.connect(DATABASE_NAME)
         cursor = conn.cursor()
@@ -168,7 +152,6 @@ def delete_transaction(transaction_id, username):
         return False
 
 def get_user_stats(username):
-    """Get user statistics"""
     try:
         conn = sqlite3.connect(DATABASE_NAME)
         cursor = conn.cursor()
@@ -187,7 +170,6 @@ def get_user_stats(username):
         )
         total_expense = cursor.fetchone()[0] or 0
         
-        # Get transaction count
         cursor.execute(
             "SELECT COUNT(*) FROM transactions WHERE username = ?",
             (username,)
@@ -213,7 +195,6 @@ def get_user_stats(username):
         }
 
 def backup_database(backup_path="backup_finance.db"):
-    """Create a backup of the database"""
     try:
         if os.path.exists(DATABASE_NAME):
             import shutil
@@ -227,7 +208,6 @@ def backup_database(backup_path="backup_finance.db"):
         print(f"Error backing up database: {e}")
         return False
 
-# Get single transaction by ID
 def get_transaction_by_id(transaction_id):
     try:
         conn = sqlite3.connect(DATABASE_NAME)
@@ -241,7 +221,7 @@ def get_transaction_by_id(transaction_id):
         return None
 
 
-# Update a transaction
+# Update transaction
 def update_transaction(transaction_id, t_type, amount, category, note, date):
     try:
         conn = sqlite3.connect(DATABASE_NAME)
@@ -259,7 +239,7 @@ def update_transaction(transaction_id, t_type, amount, category, note, date):
         return False
 
 
-# Delete a transaction
+# Delete transaction
 def delete_transaction(transaction_id):
     try:
         conn = sqlite3.connect(DATABASE_NAME)
@@ -275,77 +255,3 @@ def delete_transaction(transaction_id):
 if __name__ == "__main__":
     print("Initializing database...")
     create_table()
-=======
-    conn = connect()
-    cursor = conn.cursor()
-
-    # Users table
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        username TEXT PRIMARY KEY,
-        password TEXT
-    )
-    """)
-        
-    # Transactions table
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS transaction (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        type TEXT,
-        amount REAL,
-        category TEXT,
-        note TEXT,
-        date TEXT
-    )
-    """)
-    
-    conn.commit()
-    conn.close()
-
-def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
-
-def register_user(username, password):
-    conn = connect()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
-    if cursor.fetchone():
-        conn.close()
-        return False
-    cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)",
-                   (username, hash_password(password)))
-    conn.commit()
-    conn.close()
-    return True
-
-def validate_user(username, password):
-    conn = connect()
-    cursor = conn.cursor()
-    cursor.execute("SELECT password FROM users WHERE username = ?", (username,))
-    row = cursor.fetchone()
-    conn.close()
-    if row and row[0] == hash_password(password):
-        return True
-    return False
-
-def add_transactions(type, amount, category, note=""):
-    conn = connect()
-    cursor = conn.cursor()
-    date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cursor.execute("INSERT INTO transactions (type, amount, category, note, date) VALUES (?, ?, ?, ?, ?)",
-                   (type, amount, category, note, date))
-    conn.commit()
-    conn.close()
-
-def get_transactions():
-    conn = connect()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM transactions ORDER BY date")
-    rows = cursor.fetchall()
-    conn.close()
-<<<<<<< Updated upstream
-    return rows
->>>>>>> Stashed changes
-=======
-    return rows
->>>>>>> Stashed changes
